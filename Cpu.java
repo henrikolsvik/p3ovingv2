@@ -38,8 +38,8 @@ public class Cpu {
      */
     public Event insertProcess(Process p, long clock) {
 		cpuQueue.add(p);
-		if(cpuQueue.size() == 1){
-
+		if(cpuQueue.size() == 1 && activeProcess == null){
+			switchProcess(clock);
 		}
         return null;
     }
