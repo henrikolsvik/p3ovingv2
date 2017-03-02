@@ -1,6 +1,6 @@
-package round_robin;
+package p3ovingv2;
 
-import round_robin.graphics.SimulationGui;
+import p3ovingv2.graphics.SimulationGui;
 
 import java.io.BufferedReader;
 import java.io.IOException;

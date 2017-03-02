@@ -1,6 +1,6 @@
-package round_robin.graphics;
+package p3ovingv2.graphics;
 
-import round_robin.Process;
+import p3ovingv2.Process;
 
 import javax.swing.*;
 import java.awt.*;

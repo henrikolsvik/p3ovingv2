@@ -1,7 +1,6 @@
-package round_robin.graphics;
+package p3ovingv2.graphics;
 
-import round_robin.Process;
-
+import p3ovingv2.Process;
 import javax.swing.*;
 import java.awt.*;
 
@@ -58,4 +57,5 @@ public class Resource extends JPanel {
 		else
 			g.drawString("(Idle)",w/2-fm.stringWidth("(Idle)")/2, 5*h/8+fm.getHeight()/2);
 	}
+
 }
