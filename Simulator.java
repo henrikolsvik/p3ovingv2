@@ -70,6 +70,7 @@ public class Simulator
 		System.out.print("Simulating...");
 		// Genererate the first process arrival event
 		eventQueue.insertEvent(new Event(Event.NEW_PROCESS, 0));
+		eventQueue.insertEvent(new Event(Event.NEW_PROCESS, 100));
 		// Process events until the simulation length is exceeded:
 		while (clock < simulationLength && !eventQueue.isEmpty()) {
 			// Find the next event
@@ -98,8 +99,7 @@ public class Simulator
 			if (cb != null) { cb.accept(timeDifference); }
 
 			// Note that the processing of most events should lead to new
-			// events being added to the event queue!
-
+			// events being added to the event queue!|
 		}
 		System.out.println("..done.");
 		// End the simulation by printing out the required statistics
