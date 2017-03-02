@@ -70,8 +70,9 @@ public class Io {
      * @return	The process that was doing I/O, or null if no process was doing I/O.
      */
     public Process removeActiveProcess() {
-        // Incomplete
-        return null;
+    	Process process = getActiveProcess();
+    	this.activeProcess = null;
+        return process;
     }
 
     public Process getActiveProcess() {
