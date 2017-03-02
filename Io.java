@@ -2,14 +2,17 @@ package p3ovingv2;
 
 import java.util.LinkedList;
 
-//test new git
+//test
 
 /**
  * This class implements functionality associated with
  * the I/O device of the simulated system.
  */
 public class Io {
-    private Process activeProcess = null;
+	private Process activeProcess = null;
+    private LinkedList<Process> ioQueue;
+	private long avgIoTime;
+	private Statistics statistics;
 
     /**
      * Creates a new I/O device with the given parameters.
@@ -18,7 +21,9 @@ public class Io {
      * @param statistics	A reference to the statistics collector.
      */
     public Io(LinkedList<Process> ioQueue, long avgIoTime, Statistics statistics) {
-        // Incomplete
+    	this.ioQueue = ioQueue;
+        this.avgIoTime = avgIoTime;
+        this.statistics = statistics;
     }
 
     /**
@@ -30,7 +35,10 @@ public class Io {
      *							if no operation was initiated.
      */
     public Event addIoRequest(Process requestingProcess, long clock) {
-        // Incomplete
+    	ioQueue.add(requestingProcess);
+    	if (getActiveProcess() == null) {
+    		Event e = startIoOperation(clock);
+    	}
         return null;
     }
 
@@ -42,7 +50,7 @@ public class Io {
      *					or null	if no operation was initiated.
      */
     public Event startIoOperation(long clock) {
-        // Incomplete
+        Event e = new Event(Event.IO_REQUEST, clock);
         return null;
     }
 
@@ -51,7 +59,10 @@ public class Io {
      * @param timePassed	The amount of time that has passed since the last call to this method.
      */
     public void timePassed(long timePassed) {
-        // Incomplete
+    	statistics.ioQueueLengthTime += ioQueue.size()*timePassed;
+		if (ioQueue.size() > statistics.memoryQueueLargestLength) {
+			statistics.memoryQueueLargestLength = ioQueue.size();
+		}
     }
 
     /**
