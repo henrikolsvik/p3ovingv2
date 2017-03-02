@@ -36,8 +36,9 @@ public class Io {
      */
     public Event addIoRequest(Process requestingProcess, long clock) {
     	ioQueue.add(requestingProcess);
-    	if (getActiveProcess() == null) {
-    		Event e = startIoOperation(clock);
+    	if (ioQueue.size() > 0 && getActiveProcess() == null) {
+    		this.activeProcess = requestingProcess;
+    		return startIoOperation(clock);
     	}
         return null;
     }
@@ -50,8 +51,7 @@ public class Io {
      *					or null	if no operation was initiated.
      */
     public Event startIoOperation(long clock) {
-        Event e = new Event(Event.IO_REQUEST, clock);
-        return null;
+    	return new Event(Event.IO_REQUEST, clock + avgIoTime);
     }
 
     /**
