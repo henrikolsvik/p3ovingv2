@@ -121,4 +121,12 @@ public class Process {
 		timeOfLastEvent = clock;
 	}
 	
+	public long getCpuTimeNeeded() {
+		return cpuTimeNeeded;
+	}
+	
+	public long getAvgIoInterval() {
+		return avgIoInterval;
+	}
+	
 }
