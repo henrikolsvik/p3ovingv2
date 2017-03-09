@@ -38,6 +38,7 @@ public class Io {
     	ioQueue.add(requestingProcess);
     	if (ioQueue.size() > 0 && getActiveProcess() == null) {
     		this.activeProcess = requestingProcess;
+    		statistics.nofProcessedIoOperations++;
     		return startIoOperation(clock);
     	}
         return null;
