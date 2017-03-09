@@ -155,6 +155,8 @@ public class Simulator
 		while(p != null) {
 
 			// TODO: Add this process to the CPU queue!
+			p.addedToCpuQueue();
+			cpu.insertProcess(p, clock);
 			// Also add new events to the event queue if needed
 			// we let the process leave the system immediately, for now.
 			memory.processCompleted(p);
@@ -162,11 +164,8 @@ public class Simulator
 			transferProcessFromMemToReady();
 			// Update statistics
 			p.updateStatistics(statistics);
-
 			// Check for more free memory
 			p =	 memory.checkMemory(clock);
-
-
 		}
 	}
 
@@ -174,14 +173,14 @@ public class Simulator
 	 * Simulates a process switch.
 	 */
 	private void switchProcess() {
-		// Incomplete
+		cpu.switchProcess(clock);
 	}
 
 	/**
 	 * Ends the active process, and deallocates any resources allocated to it.
 	 */
 	private void endProcess() {
-		// Incomplete
+		Process p;
 	}
 
 	/**

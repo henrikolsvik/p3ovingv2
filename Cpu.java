@@ -39,8 +39,8 @@ public class Cpu {
 		p.addedToCpuQueue();
 		if (cpuQueue.size() == 1 && activeProcess == null) {
 			this.activeProcess = p;
-    		statistics.nofProcessSwitches++;
-			return switchProcess(clock);
+			statistics.nofProcessSwitches++;
+			return new Event(Event.SWITCH_PROCESS, clock + maxCpuTime);
 		}
         return null;
     }
