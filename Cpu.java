@@ -77,8 +77,7 @@ public class Cpu {
 		if (this.activeProcess == null) {
 			return null;
 		}
-		Event switchEvent = new Event(Event.SWITCH_PROCESS, clock);
-		return switchEvent;
+		return new Event(Event.SWITCH_PROCESS, clock);
     }
 
     /**

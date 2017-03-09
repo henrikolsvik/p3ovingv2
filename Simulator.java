@@ -173,14 +173,14 @@ public class Simulator
 	 * Simulates a process switch.
 	 */
 	private void switchProcess() {
-		cpu.switchProcess(clock);
+		eventQueue.insertEvent(cpu.switchProcess(clock));
 	}
 
 	/**
 	 * Ends the active process, and deallocates any resources allocated to it.
 	 */
 	private void endProcess() {
-		Process p;
+		eventQueue.insertEvent(new Event(Event.END_PROCESS, clock));
 	}
 
 	/**
@@ -188,7 +188,7 @@ public class Simulator
 	 * perform an I/O operation.
 	 */
 	private void processIoRequest() {
-		// Incomplete
+		eventQueue.insertEvent(io.addIoRequest(ioQueue.getFirst(), clock));
 	}
 
 	/**
@@ -196,7 +196,8 @@ public class Simulator
 	 * is done with its I/O operation.
 	 */
 	private void endIoOperation() {
-		// Incomplete
+		eventQueue.insertEvent(new Event(Event.END_IO, clock));
+		io.removeActiveProcess();
 	}
 
 
