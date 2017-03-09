@@ -36,6 +36,7 @@ public class Io {
      */
     public Event addIoRequest(Process requestingProcess, long clock) {
     	ioQueue.add(requestingProcess);
+    	requestingProcess.addedToIoQueue();
     	if (ioQueue.size() > 0 && getActiveProcess() == null) {
     		this.activeProcess = requestingProcess;
     		statistics.nofProcessedIoOperations++;
@@ -61,8 +62,8 @@ public class Io {
      */
     public void timePassed(long timePassed) {
     	statistics.ioQueueLengthTime += ioQueue.size()*timePassed;
-		if (ioQueue.size() > statistics.memoryQueueLargestLength) {
-			statistics.memoryQueueLargestLength = ioQueue.size();
+		if (ioQueue.size() > statistics.ioQueueLargestLength) {
+			statistics.ioQueueLargestLength = ioQueue.size();
 		}
     }
 

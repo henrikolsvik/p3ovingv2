@@ -100,6 +100,25 @@ public class Process {
 	public long getProcessId() {
 		return processId;
 	}
-
+	
 	// Add more methods as needed
+	
+	public void addedToIoQueue() {
+		nofTimesInIoQueue++;
+	}
+	
+	public void addedToCpuQueue() {
+		nofTimesInReadyQueue++;
+	}
+
+	public void leftIoQueue(long clock) {
+		timeSpentWaitingForIo += clock - timeOfLastEvent;
+		timeOfLastEvent = clock;
+	}
+	
+	public void leftCpuQueue(long clock) {
+		timeSpentInReadyQueue += clock - timeOfLastEvent;
+		timeOfLastEvent = clock;
+	}
+	
 }

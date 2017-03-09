@@ -2,9 +2,6 @@ package p3ovingv2;
 
 import java.util.LinkedList;
 
-//NAVJOT IS A FAGGOT LOLE
-
-
 /**
  * This class implements functionality associated with
  * the CPU unit of the simulated system.
@@ -38,8 +35,11 @@ public class Cpu {
      */
     public Event insertProcess(Process p, long clock) {
 		cpuQueue.add(p);
-		if(cpuQueue.size() == 1 && activeProcess == null){
-			switchProcess(clock);
+		p.addedToCpuQueue();
+		if (cpuQueue.size() == 1 && activeProcess == null) {
+			this.activeProcess = p;
+    		statistics.nofProcessSwitches++;
+			return switchProcess(clock);
 		}
         return null;
     }
@@ -53,8 +53,8 @@ public class Cpu {
      *				or null	if no process was activated.
      */
     public Event switchProcess(long clock) {
-		if(this.cpuQueue.size() != 0){
-			if(this.activeProcess != null){
+		if (this.cpuQueue.size() > 0) {
+			if (this.activeProcess != null) {
 				Process sendToBack = getActiveProcess();
 				this.cpuQueue.add(sendToBack);
 			}
@@ -73,7 +73,7 @@ public class Cpu {
      */
     //Do we need this? (probs)
     public Event activeProcessLeft(long clock) {
-		if(this.activeProcess == null){
+		if (this.activeProcess == null) {
 			return null;
 		}
 		Event switchEvent = new Event(Event.SWITCH_PROCESS, maxCpuTime);
@@ -93,7 +93,7 @@ public class Cpu {
      * @param timePassed	The amount of time that has passed since the last call to this method.
      */
     public void timePassed(long timePassed) {
-		statistics.memoryQueueLengthTime += this.cpuQueue.size()*timePassed;
+		statistics.cpuQueueLengthTime += this.cpuQueue.size()*timePassed;
 		if (this.cpuQueue.size() > statistics.cpuQueueLargestLength) {
 			statistics.cpuQueueLargestLength = this.cpuQueue.size();
 		}
