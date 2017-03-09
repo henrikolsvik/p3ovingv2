@@ -1,5 +1,6 @@
 package p3ovingv2;
 
+import java.time.Clock;
 import java.util.LinkedList;
 
 /**
@@ -76,7 +77,7 @@ public class Cpu {
 		if (this.activeProcess == null) {
 			return null;
 		}
-		Event switchEvent = new Event(Event.SWITCH_PROCESS, maxCpuTime);
+		Event switchEvent = new Event(Event.SWITCH_PROCESS, clock);
 		return switchEvent;
     }
 

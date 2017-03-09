@@ -69,7 +69,6 @@ public class Simulator
 
 		System.out.print("Simulating...");
 		// Genererate the first process arrival event
-		eventQueue.insertEvent(new Event(Event.NEW_PROCESS, 0));
 		eventQueue.insertEvent(new Event(Event.NEW_PROCESS, 100));
 		// Process events until the simulation length is exceeded:
 		while (clock < simulationLength && !eventQueue.isEmpty()) {
@@ -154,11 +153,9 @@ public class Simulator
 		Process p = memory.checkMemory(clock);
 		// As long as there is enough memory, processes are moved from the memory queue to the cpu queue
 		while(p != null) {
-			
+
 			// TODO: Add this process to the CPU queue!
 			// Also add new events to the event queue if needed
-
-			// Since we haven't implemented the CPU and I/O device yet,
 			// we let the process leave the system immediately, for now.
 			memory.processCompleted(p);
 			// Try to use the freed memory:
@@ -168,6 +165,8 @@ public class Simulator
 
 			// Check for more free memory
 			p =	 memory.checkMemory(clock);
+
+
 		}
 	}
 
