@@ -156,7 +156,8 @@ public class Simulator
 
 			// TODO: Add this process to the CPU queue!
 			p.addedToCpuQueue();
-			cpu.insertProcess(p, clock);
+			Event resultingEvent = cpu.insertProcess(p, clock);
+			eventQueue.insertEvent(resultingEvent);
 			// Also add new events to the event queue if needed
 			// we let the process leave the system immediately, for now.
 			memory.processCompleted(p);
@@ -173,14 +174,50 @@ public class Simulator
 	 * Simulates a process switch.
 	 */
 	private void switchProcess() {
-		cpu.switchProcess(clock);
+		Process process = cpu.getActiveProcess();
+		if(process != null){
+			process.leftCpuQueue(clock);
+			statistics.nofProcessSwitches++;
+		}
+		/*
+		if(process != null){
+		//	process.leftCpuQueue(clock);
+		//	cpu.insertProcess(process, clock);
+		//statistics.nofForcedProcessSwitch++;
+		}
+		*/
+		//eventQueue.insertEvent(cpu.switchProcess(clock));
+
+		if(process != null){
+			process.enterCpuTime(clock);
+			//TODO: ADD SUPPORT FOR IO QUEUE
+			if(process.getRemaining() > cpu.maxCpuTime){
+				statistics.totalBusyCpuTime+=cpu.maxCpuTime;
+				process.setRemaining(cpu.maxCpuTime);
+				eventQueue.insertEvent(cpu.switchProcess(clock));
+			}
+			else{
+				System.out.println("adding end request");
+				statistics.totalBusyCpuTime += process.getRemaining();
+				eventQueue.insertEvent(new Event(Event.END_PROCESS, clock+process.getRemaining()));
+			}
+			/*
+			else{
+				statistics.totalCpuTime+=process.getTimeToIO();
+				eventQueue.insertEvent(new Event(Event.IO_REQUEST, clock+process.getTimeToIO()));
+			}
+			*/
+		}
 	}
 
 	/**
 	 * Ends the active process, and deallocates any resources allocated to it.
 	 */
 	private void endProcess() {
-		Process p;
+		Process p = cpu.getActiveProcess();
+		memory.processCompleted(p);
+		cpu.endProcess();
+		cpu.switchProcess(clock);
 	}
 
 	/**

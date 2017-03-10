@@ -42,7 +42,7 @@ public class Cpu {
 			statistics.nofProcessSwitches++;
 			return new Event(Event.SWITCH_PROCESS, clock + maxCpuTime);
 		}
-        return null;
+        return new Event(Event.SWITCH_PROCESS, clock + maxCpuTime);
     }
 
     /**
@@ -60,6 +60,7 @@ public class Cpu {
 				this.cpuQueue.add(sendToBack);
 			}
 			Process toStart = this.cpuQueue.getFirst();
+			this.cpuQueue.remove(0);
 			this.activeProcess = toStart;
 			return activeProcessLeft(clock);
 		}
@@ -77,7 +78,7 @@ public class Cpu {
 		if (this.activeProcess == null) {
 			return null;
 		}
-		Event switchEvent = new Event(Event.SWITCH_PROCESS, clock);
+		Event switchEvent = new Event(Event.SWITCH_PROCESS, clock + maxCpuTime);
 		return switchEvent;
     }
 
@@ -99,4 +100,9 @@ public class Cpu {
 			statistics.cpuQueueLargestLength = this.cpuQueue.size();
 		}
     }
+
+    public void endProcess(){
+		activeProcess = null;
+	}
+
 }

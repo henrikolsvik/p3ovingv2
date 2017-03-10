@@ -50,6 +50,7 @@ public class Process {
 		// Memory need varies from 100 kB to 25% of memory size
 		memoryNeeded = 100 + (long)(Math.random()*(memorySize/4-100));
 		// CPU time needed varies from 100 to 10000 milliseconds
+		// replace "10" with "9990" to restore, set to 3 for testing purposes
 		cpuTimeNeeded = 100 + (long)(Math.random()*9900);
 		// Average interval between I/O requests varies from 1% to 25% of CPU time needed
 		avgIoInterval = (1 + (long)(Math.random()*25))*cpuTimeNeeded/100;
@@ -127,6 +128,18 @@ public class Process {
 	
 	public long getAvgIoInterval() {
 		return avgIoInterval;
+	}
+
+	public long getRemaining(){
+		return cpuTimeNeeded;
+	}
+
+	public void setRemaining(long timeToReduce){
+		cpuTimeNeeded -= timeToReduce;
+	}
+
+	public void enterCpuTime(long clock){
+		timeOfLastEvent = clock;
 	}
 	 //test
 }
