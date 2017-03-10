@@ -225,7 +225,7 @@ public class Simulator
 	 * perform an I/O operation.
 	 */
 	private void processIoRequest() {
-		// Incomplete
+		eventQueue.insertEvent(io.addIoRequest(ioQueue.getFirst(), clock));
 	}
 
 	/**
@@ -233,7 +233,8 @@ public class Simulator
 	 * is done with its I/O operation.
 	 */
 	private void endIoOperation() {
-		// Incomplete
+		eventQueue.insertEvent(new Event(Event.END_IO, clock));
+		io.removeActiveProcess();
 	}
 
 

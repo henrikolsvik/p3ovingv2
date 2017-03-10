@@ -40,9 +40,7 @@ public class Io {
     	if (ioQueue.size() > 0 && getActiveProcess() == null) {
     		this.activeProcess = requestingProcess;
     		statistics.nofProcessedIoOperations++;
-    		Event ioOp = startIoOperation(clock);
-    		removeActiveProcess();
-    		return ioOp;
+    		return startIoOperation(clock);
     	}
         return null;
     }
