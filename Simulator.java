@@ -7,15 +7,14 @@ import java.util.function.Consumer;
 /**
  * The main class of the P3 exercise. This class is only partially complete.
  */
-public class Simulator
-{
+public class Simulator {
 	/** Process queues */
 	private LinkedList<Process> memoryQueue = new LinkedList<>();
 	private LinkedList<Process> cpuQueue = new LinkedList<>();
 	private LinkedList<Process> ioQueue = new LinkedList<>();
 
 	/** The queue of events to come */
-    private EventQueue eventQueue = new EventQueue();
+	private EventQueue eventQueue = new EventQueue();
 
 	/** Reference to the statistics collector */
 	private Statistics statistics = new Statistics();
@@ -24,14 +23,14 @@ public class Simulator
 	private volatile Consumer<Long> onEventHandled = null;
 
 	/** Reference to the memory unit */
-    private Memory memory;
+	private Memory memory;
 	/** Reference to the CPU */
 	private Cpu cpu;
 	/** Reference to the I/O device */
 	private Io io;
 
 	/** The global clock */
-    private long clock;
+	private long clock;
 	/** The length of the simulation */
 	private long simulationLength;
 	/** The average length between process arrivals */
@@ -40,11 +39,17 @@ public class Simulator
 
 	/**
 	 * Constructs a scheduling simulator with the given parameters.
-	 * @param memorySize			The size of the memory.
-	 * @param maxCpuTime			The maximum time quant used by the RR algorithm.
-	 * @param avgIoTime				The average length of an I/O operation.
-	 * @param simulationLength		The length of the simulation.
-	 * @param avgArrivalInterval	The average time between process arrivals.
+	 * 
+	 * @param memorySize
+	 *            The size of the memory.
+	 * @param maxCpuTime
+	 *            The maximum time quant used by the RR algorithm.
+	 * @param avgIoTime
+	 *            The average length of an I/O operation.
+	 * @param simulationLength
+	 *            The length of the simulation.
+	 * @param avgArrivalInterval
+	 *            The average time between process arrivals.
 	 */
 	public Simulator(long memorySize, long maxCpuTime, long avgIoTime, long simulationLength, long avgArrivalInterval) {
 		this.simulationLength = simulationLength;
@@ -58,12 +63,12 @@ public class Simulator
 		clock = 0;
 
 		// Add code as needed
-    }
+	}
 
 	/**
-	 * Starts the simulation. Contains the main loop, processing events.
-	 * This method is called when the "Start simulation" button in the
-	 * GUI is clicked.
+	 * Starts the simulation. Contains the main loop, processing events. This
+	 * method is called when the "Start simulation" button in the GUI is
+	 * clicked.
 	 */
 	public void simulate() {
 
@@ -75,15 +80,18 @@ public class Simulator
 			// Find the next event
 			Event event = eventQueue.getNextEvent();
 			// Find out how much time that passed...
-			long timeDifference = event.getTime()-clock;
+			long timeDifference = event.getTime() - clock;
 			// ...and update the clock.
 			clock = event.getTime();
 
 			/* Let the GUI know that time passed. */
 			Consumer<Long> cb = onTimeStep;
-			if (cb != null) { cb.accept(timeDifference); }
+			if (cb != null) {
+				cb.accept(timeDifference);
+			}
 
-			// Let the cpu, memory unit, io and the GUI know that time has passed
+			// Let the cpu, memory unit, io and the GUI know that time has
+			// passed
 			cpu.timePassed(timeDifference);
 			memory.timePassed(timeDifference);
 			io.timePassed(timeDifference);
@@ -95,7 +103,9 @@ public class Simulator
 
 			// Let the GUI know we handled an event.
 			cb = onEventHandled;
-			if (cb != null) { cb.accept(timeDifference); }
+			if (cb != null) {
+				cb.accept(timeDifference);
+			}
 
 			// Note that the processing of most events should lead to new
 			// events being added to the event queue!|
@@ -106,27 +116,29 @@ public class Simulator
 	}
 
 	/**
-	 * Processes an event by inspecting its type and delegating
-	 * the work to the appropriate method.
-	 * @param event	The event to be processed.
+	 * Processes an event by inspecting its type and delegating the work to the
+	 * appropriate method.
+	 * 
+	 * @param event
+	 *            The event to be processed.
 	 */
 	private void processEvent(Event event) {
 		switch (event.getType()) {
-			case Event.NEW_PROCESS:
-				createProcess();
-				break;
-			case Event.SWITCH_PROCESS:
-				switchProcess();
-				break;
-			case Event.END_PROCESS:
-				endProcess();
-				break;
-			case Event.IO_REQUEST:
-				processIoRequest();
-				break;
-			case Event.END_IO:
-				endIoOperation();
-				break;
+		case Event.NEW_PROCESS:
+			createProcess();
+			break;
+		case Event.SWITCH_PROCESS:
+			switchProcess();
+			break;
+		case Event.END_PROCESS:
+			endProcess();
+			break;
+		case Event.IO_REQUEST:
+			processIoRequest();
+			break;
+		case Event.END_IO:
+			endIoOperation();
+			break;
 		}
 	}
 
@@ -139,20 +151,21 @@ public class Simulator
 		memory.insertProcess(newProcess);
 		transferProcessFromMemToReady();
 		// Add an event for the next process arrival
-		long nextArrivalTime = clock + 1 + (long)(2*Math.random()*avgArrivalInterval);
+		long nextArrivalTime = clock + 1 + (long) (2 * Math.random() * avgArrivalInterval);
 		eventQueue.insertEvent(new Event(Event.NEW_PROCESS, nextArrivalTime));
 		// Update statistics
 		statistics.nofCreatedProcesses++;
-    }
+	}
 
 	/**
-	 * Transfers processes from the memory queue to the ready queue as long as there is enough
-	 * memory for the processes.
+	 * Transfers processes from the memory queue to the ready queue as long as
+	 * there is enough memory for the processes.
 	 */
 	private void transferProcessFromMemToReady() {
 		Process p = memory.checkMemory(clock);
-		// As long as there is enough memory, processes are moved from the memory queue to the cpu queue
-		while(p != null) {
+		// As long as there is enough memory, processes are moved from the
+		// memory queue to the cpu queue
+		while (p != null) {
 
 			// TODO: Add this process to the CPU queue!
 			p.addedToCpuQueue();
@@ -166,7 +179,7 @@ public class Simulator
 			// Update statistics
 			p.updateStatistics(statistics);
 			// Check for more free memory
-			p =	 memory.checkMemory(clock);
+			p = memory.checkMemory(clock);
 		}
 	}
 
@@ -175,38 +188,34 @@ public class Simulator
 	 */
 	private void switchProcess() {
 		Process process = cpu.getActiveProcess();
-		if(process != null){
+		if (process != null) {
 			process.leftCpuQueue(clock);
 			statistics.nofProcessSwitches++;
 		}
 		/*
-		if(process != null){
-		//	process.leftCpuQueue(clock);
-		//	cpu.insertProcess(process, clock);
-		//statistics.nofForcedProcessSwitch++;
-		}
-		*/
-		//eventQueue.insertEvent(cpu.switchProcess(clock));
+		 * if(process != null){ // process.leftCpuQueue(clock); //
+		 * cpu.insertProcess(process, clock);
+		 * //statistics.nofForcedProcessSwitch++; }
+		 */
+		// eventQueue.insertEvent(cpu.switchProcess(clock));
 
-		if(process != null){
+		if (process != null) {
 			process.enterCpuTime(clock);
-			//TODO: ADD SUPPORT FOR IO QUEUE
-			if(process.getRemaining() > cpu.maxCpuTime){
-				statistics.totalBusyCpuTime+=cpu.maxCpuTime;
+			// TODO: ADD SUPPORT FOR IO QUEUE
+			if (process.getRemaining() > cpu.maxCpuTime) {
+				statistics.totalBusyCpuTime += cpu.maxCpuTime;
 				process.setRemaining(cpu.maxCpuTime);
 				eventQueue.insertEvent(cpu.switchProcess(clock));
-			}
-			else{
+			} else {
 				System.out.println("adding end request");
 				statistics.totalBusyCpuTime += process.getRemaining();
-				eventQueue.insertEvent(new Event(Event.END_PROCESS, clock+process.getRemaining()));
+				eventQueue.insertEvent(new Event(Event.END_PROCESS, clock + process.getRemaining()));
 			}
 			/*
-			else{
-				statistics.totalCpuTime+=process.getTimeToIO();
-				eventQueue.insertEvent(new Event(Event.IO_REQUEST, clock+process.getTimeToIO()));
-			}
-			*/
+			 * else{ statistics.totalCpuTime+=process.getTimeToIO();
+			 * eventQueue.insertEvent(new Event(Event.IO_REQUEST,
+			 * clock+process.getTimeToIO())); }
+			 */
 		}
 	}
 
@@ -221,24 +230,26 @@ public class Simulator
 	}
 
 	/**
-	 * Processes an event signifying that the active process needs to
-	 * perform an I/O operation.
+	 * Processes an event signifying that the active process needs to perform an
+	 * I/O operation.
 	 */
 	private void processIoRequest() {
 		eventQueue.insertEvent(io.addIoRequest(ioQueue.getFirst(), clock));
 	}
 
 	/**
-	 * Processes an event signifying that the process currently doing I/O
-	 * is done with its I/O operation.
+	 * Processes an event signifying that the process currently doing I/O is
+	 * done with its I/O operation.
 	 */
 	private void endIoOperation() {
 		eventQueue.insertEvent(new Event(Event.END_IO, clock));
 		io.removeActiveProcess();
 	}
 
-
-	/* The following methods are used by the GUI and should not be removed or modified. */
+	/*
+	 * The following methods are used by the GUI and should not be removed or
+	 * modified.
+	 */
 
 	public LinkedList<Process> getMemoryQueue() {
 		return memoryQueue;

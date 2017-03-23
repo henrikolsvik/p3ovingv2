@@ -3,8 +3,8 @@ package p3ovingv2;
 import java.util.LinkedList;
 
 /**
- * This class implements functionality associated with
- * the memory device of the simulated system.
+ * This class implements functionality associated with the memory device of the
+ * simulated system.
  */
 public class Memory {
 	/** The queue of processes waiting for free memory */
@@ -18,20 +18,25 @@ public class Memory {
 
 	/**
 	 * Creates a new memory device with the given parameters.
-	 * @param memoryQueue	The memory queue to be used.
-	 * @param memorySize	The amount of memory in the memory device.
-	 * @param statistics	A reference to the statistics collector.
+	 * 
+	 * @param memoryQueue
+	 *            The memory queue to be used.
+	 * @param memorySize
+	 *            The amount of memory in the memory device.
+	 * @param statistics
+	 *            A reference to the statistics collector.
 	 */
-    public Memory(LinkedList<Process> memoryQueue, long memorySize, Statistics statistics) {
+	public Memory(LinkedList<Process> memoryQueue, long memorySize, Statistics statistics) {
 		this.memoryQueue = memoryQueue;
 		this.memorySize = memorySize;
 		this.statistics = statistics;
 		freeMemory = memorySize;
-    }
+	}
 
 	/**
 	 * Returns the amount of memory in the memory device.
-	 * @return	The size of the memory device.
+	 * 
+	 * @return The size of the memory device.
 	 */
 	public long getMemorySize() {
 		return memorySize;
@@ -39,23 +44,26 @@ public class Memory {
 
 	/**
 	 * Adds a process to the memory queue.
-	 * @param p	The process to be added.
+	 * 
+	 * @param p
+	 *            The process to be added.
 	 */
 	public void insertProcess(Process p) {
 		memoryQueue.add(p);
 	}
 
-    /**
-     * Checks whether or not there is enough free memory to let
-	 * the first process in the memory queue proceed to the cpu queue.
-	 * If there is, the process that was granted memory is returned,
-	 * otherwise null is returned.
-     * @param clock The current time.
-     */  
+	/**
+	 * Checks whether or not there is enough free memory to let the first
+	 * process in the memory queue proceed to the cpu queue. If there is, the
+	 * process that was granted memory is returned, otherwise null is returned.
+	 * 
+	 * @param clock
+	 *            The current time.
+	 */
 	public Process checkMemory(long clock) {
-		if(!memoryQueue.isEmpty()) { 
-			Process nextProcess = (Process)memoryQueue.peek();
-			if(nextProcess.getMemoryNeeded() <= freeMemory) {
+		if (!memoryQueue.isEmpty()) {
+			Process nextProcess = (Process) memoryQueue.peek();
+			if (nextProcess.getMemoryNeeded() <= freeMemory) {
 				// Allocate memory to this process
 				freeMemory -= nextProcess.getMemoryNeeded();
 				nextProcess.leftMemoryQueue(clock);
@@ -68,22 +76,26 @@ public class Memory {
 
 	/**
 	 * This method is called when a discrete amount of time has passed.
-	 * @param timePassed	The amount of time that has passed since the last call to this method.
+	 * 
+	 * @param timePassed
+	 *            The amount of time that has passed since the last call to this
+	 *            method.
 	 */
 	public void timePassed(long timePassed) {
-		statistics.memoryQueueLengthTime += memoryQueue.size()*timePassed;
+		statistics.memoryQueueLengthTime += memoryQueue.size() * timePassed;
 		if (memoryQueue.size() > statistics.memoryQueueLargestLength) {
 			statistics.memoryQueueLargestLength = memoryQueue.size();
 		}
-    }
-    
-	/**
-	 * This method is called when a process is exiting the system.
-	 * The memory allocated to this process is freed.
-	 * @param p	The process that is leaving the system.
-	 */
-    public void processCompleted(Process p) {
-		freeMemory += p.getMemoryNeeded();
-    }
-}
+	}
 
+	/**
+	 * This method is called when a process is exiting the system. The memory
+	 * allocated to this process is freed.
+	 * 
+	 * @param p
+	 *            The process that is leaving the system.
+	 */
+	public void processCompleted(Process p) {
+		freeMemory += p.getMemoryNeeded();
+	}
+}
