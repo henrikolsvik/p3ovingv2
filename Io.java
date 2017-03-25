@@ -2,8 +2,6 @@ package p3ovingv2;
 
 import java.util.LinkedList;
 
-//test
-
 /**
  * This class implements functionality associated with the I/O device of the
  * simulated system.
@@ -62,7 +60,13 @@ public class Io {
 	 *         started, or null if no operation was initiated.
 	 */
 	public Event startIoOperation(long clock) {
-		return new Event(Event.IO_REQUEST, clock + avgIoTime);
+		if (!ioQueue.isEmpty()) {
+			Process process = ioQueue.remove();
+			this.activeProcess = process;
+			process.addedToIoQueue(clock);
+			return new Event(Event.IO_REQUEST, clock + avgIoTime);
+		}
+		return null;
 	}
 
 	/**
@@ -85,9 +89,12 @@ public class Io {
 	 * @return The process that was doing I/O, or null if no process was doing
 	 *         I/O.
 	 */
-	public Process removeActiveProcess() {
+	public Process removeActiveProcess(long clock) {
 		Process process = getActiveProcess();
-		this.activeProcess = null;
+		if (process != null) {
+			process.leftIoQueue(clock);
+			this.activeProcess = null;
+		}
 		return process;
 	}
 
@@ -95,5 +102,4 @@ public class Io {
 		return activeProcess;
 	}
 
-	// test
 }

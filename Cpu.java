@@ -1,6 +1,5 @@
 package p3ovingv2;
 
-import java.time.Clock;
 import java.util.LinkedList;
 
 /**
@@ -44,7 +43,7 @@ public class Cpu {
 	public Event insertProcess(Process p, long clock) {
 		cpuQueue.add(p);
 		p.addedToCpuQueue();
-		if (cpuQueue.size() == 1 && activeProcess == null) {
+		if (cpuQueue.size() > 0 && activeProcess == null) {
 			this.activeProcess = p;
 			statistics.nofProcessSwitches++;
 			return new Event(Event.SWITCH_PROCESS, clock + maxCpuTime);

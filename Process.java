@@ -117,12 +117,14 @@ public class Process {
 
 	// Add more methods as needed
 
-	public void addedToIoQueue() {
+	public void addedToIoQueue(long clock) {
 		nofTimesInIoQueue++;
+		timeOfLastEvent = clock;
 	}
 
-	public void addedToCpuQueue() {
+	public void addedToCpuQueue(long clock) {
 		nofTimesInReadyQueue++;
+		timeOfLastEvent = clock;
 	}
 
 	public void leftIoQueue(long clock) {
@@ -150,9 +152,9 @@ public class Process {
 	public void setRemaining(long timeToReduce) {
 		cpuTimeNeeded -= timeToReduce;
 	}
-
-	public void enterCpuTime(long clock) {
-		timeOfLastEvent = clock;
+	
+	public long getTimeToNextIoOperation() {
+		return timeToNextIoOperation;
 	}
-	// test
+	
 }

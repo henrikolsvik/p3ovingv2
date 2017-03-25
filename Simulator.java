@@ -243,7 +243,7 @@ public class Simulator {
 	 */
 	private void endIoOperation() {
 		eventQueue.insertEvent(new Event(Event.END_IO, clock));
-		io.removeActiveProcess();
+		io.removeActiveProcess(clock);
 	}
 
 	/*

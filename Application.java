@@ -1,7 +1,6 @@
 package p3ovingv2;
 
 import p3ovingv2.graphics.SimulationGui;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,8 +17,7 @@ public class Application {
 		}
 	}
 
-	static void launch(long memorySize, long maxCpuTime, long avgIoTime, long simulationLength,
-			long avgArrivalInterval) {
+	static void launch(long memorySize, long maxCpuTime, long avgIoTime, long simulationLength, long avgArrivalInterval) {
 		Simulator simulator = new Simulator(memorySize, maxCpuTime, avgIoTime, simulationLength, avgArrivalInterval);
 		SimulationGui gui = new SimulationGui(simulator);
 	}
