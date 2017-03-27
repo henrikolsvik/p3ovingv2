@@ -166,8 +166,6 @@ public class Simulator {
 		// As long as there is enough memory, processes are moved from the
 		// memory queue to the cpu queue
 		while (p != null) {
-
-			// TODO: Add this process to the CPU queue!
 			p.addedToCpuQueue(clock);
 			Event resultingEvent = cpu.insertProcess(p, clock);
 			eventQueue.insertEvent(resultingEvent);
@@ -192,16 +190,9 @@ public class Simulator {
 			process.leftCpuQueue(clock);
 			statistics.nofProcessSwitches++;
 		}
-		/*
-		 * if(process != null){ // process.leftCpuQueue(clock); //
-		 * cpu.insertProcess(process, clock);
-		 * //statistics.nofForcedProcessSwitch++; }
-		 */
-		// eventQueue.insertEvent(cpu.switchProcess(clock));
 
 		if (process != null) {
 			process.addedToCpuQueue(clock);
-			// TODO: ADD SUPPORT FOR IO QUEUE
 			if(process.getTimeToNextIoOperation() < cpu.maxCpuTime){
 				statistics.totalBusyCpuTime += process.getTimeToNextIoOperation();
 				process.setRemaining(process.getTimeToNextIoOperation());
@@ -218,11 +209,6 @@ public class Simulator {
 				statistics.totalBusyCpuTime += process.getRemaining();
 				eventQueue.insertEvent(new Event(Event.END_PROCESS, clock + process.getRemaining()));
 			}
-			/*
-			 * else{ statistics.totalCpuTime+=process.getTimeToIO();
-			 * eventQueue.insertEvent(new Event(Event.IO_REQUEST,
-			 * clock+process.getTimeToIO())); }
-			 */
 		}
 	}
 
@@ -241,7 +227,12 @@ public class Simulator {
 	 * I/O operation.
 	 */
 	private void processIoRequest() {
+		Process p = cpu.getActiveProcess();
+		
+		ioQueue.add(p);
+		
 		eventQueue.insertEvent(io.addIoRequest(ioQueue.getFirst(), clock));
+		
 	}
 
 	/**

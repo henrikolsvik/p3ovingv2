@@ -131,7 +131,7 @@ public class Process {
 	}
 
 	public void leftIoQueue(long clock) {
-		timeToNextIoOperation = avgIoInterval;
+		setTimeToNextIoOperation(avgIoInterval);
 		timeSpentWaitingForIo += clock - timeOfLastEvent;
 		timeOfLastEvent = clock;
 	}
@@ -155,6 +155,10 @@ public class Process {
 	
 	public long getTimeToNextIoOperation() {
 		return timeToNextIoOperation;
+	}
+
+	public void setTimeToNextIoOperation(long time) {
+		timeToNextIoOperation = time;
 	}
 
 	public void endProcess(long clock) {
