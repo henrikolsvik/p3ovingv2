@@ -56,7 +56,7 @@ public class Simulator {
 		this.avgArrivalInterval = avgArrivalInterval;
 		this.statistics = new Statistics();
 		memory = new Memory(memoryQueue, memorySize, statistics);
-		cpu = new Cpu(cpuQueue, maxCpuTime, statistics);
+		cpu = new Cpu(cpuQueue, maxCpuTime, statistics, eventQueue);
 		io = new Io(ioQueue, avgIoTime, statistics);
 
 		memoryQueue.add(new Process(memorySize, avgIoTime));
@@ -187,6 +187,19 @@ public class Simulator {
 	 * Simulates a process switch.
 	 */
 	private void switchProcess() {
+		Process old = cpu.switchProcess(clock);
+
+		if (old != null){
+			this.statistics.nofProcessSwitches ++;
+			cpu.insertProcess(old, clock);
+
+			if (cpu.isIdle()) {
+				cpu.switchProcess(clock);
+			}
+		}
+
+
+		/*
 		Process process = cpu.getActiveProcess();
 		if (process != null) {
 			process.leftCpuQueue(clock);
@@ -198,7 +211,7 @@ public class Simulator {
 		 * //statistics.nofForcedProcessSwitch++; }
 		 */
 		// eventQueue.insertEvent(cpu.switchProcess(clock));
-
+		/*
 		if (process != null) {
 			process.addedToCpuQueue(clock);
 			// TODO: ADD SUPPORT FOR IO QUEUE
@@ -223,7 +236,8 @@ public class Simulator {
 			 * eventQueue.insertEvent(new Event(Event.IO_REQUEST,
 			 * clock+process.getTimeToIO())); }
 			 */
-		}
+		//}
+
 	}
 
 	/**
@@ -241,7 +255,15 @@ public class Simulator {
 	 * I/O operation.
 	 */
 	private void processIoRequest() {
-		eventQueue.insertEvent(io.addIoRequest(ioQueue.getFirst(), clock));
+		Process p = cpu.getActiveProcess();
+		io.addIoRequest(p, clock);
+
+		if (io.isIdle()){
+			Event event = io.startIoOperation(clock);
+			if (event != null){
+				eventQueue.insertEvent(event);
+			}
+		}
 	}
 
 	/**
@@ -249,8 +271,18 @@ public class Simulator {
 	 * done with its I/O operation.
 	 */
 	private void endIoOperation() {
-		eventQueue.insertEvent(new Event(Event.END_IO, clock));
-		io.removeActiveProcess(clock);
+		Process old = io.removeActiveProcess(clock);
+		cpu.insertProcess(old, clock);
+		if (cpu.isIdle()){
+			cpu.switchProcess(clock);
+		}
+		if (io.isIdle()){
+			Event event = io.startIoOperation(clock);
+			if (event != null){
+				eventQueue.insertEvent(event);
+			}
+		}
+
 	}
 
 	/*

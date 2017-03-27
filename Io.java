@@ -102,4 +102,6 @@ public class Io {
 		return activeProcess;
 	}
 
+	public boolean isIdle(){return this.activeProcess == null;}
+
 }

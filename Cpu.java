@@ -12,6 +12,7 @@ public class Cpu {
 	public long maxCpuTime;
 	public Statistics statistics;
 	private Process activeProcess;
+	EventQueue eventQueue;
 
 	/**
 	 * Creates a new CPU with the given parameters.
@@ -23,10 +24,11 @@ public class Cpu {
 	 * @param statistics
 	 *            A reference to the statistics collector.
 	 */
-	public Cpu(LinkedList<Process> cpuQueueToSet, long maxCpuTime, Statistics statistics) {
+	public Cpu(LinkedList<Process> cpuQueueToSet, long maxCpuTime, Statistics statistics, EventQueue eventQueue) {
 		this.cpuQueue = cpuQueueToSet;
 		this.maxCpuTime = maxCpuTime;
 		this.statistics = statistics;
+		this.eventQueue = eventQueue;
 	}
 
 	/**
@@ -62,18 +64,37 @@ public class Cpu {
 	 * @return The event causing the process that was activated to leave the
 	 *         CPU, or null if no process was activated.
 	 */
-	public Event switchProcess(long clock) {
-		if (this.cpuQueue.size() > 0) {
-			if (this.activeProcess != null) {
-				Process sendToBack = getActiveProcess();
-				this.cpuQueue.add(sendToBack);
-			}
-			Process toStart = this.cpuQueue.getFirst();
-			this.cpuQueue.remove(0);
-			this.activeProcess = toStart;
-			return activeProcessLeft(clock);
+	public Process switchProcess(long clock) {
+		Process old = this.activeProcess;
+		if (old != null){
+			//old.leftCpu(clock);
 		}
-		return null;
+
+		if(cpuQueue.isEmpty()) {
+			this.activeProcess = null;
+		} else {
+			this.activeProcess = cpuQueue.remove();
+		}
+
+
+		if (this.activeProcess != null){
+			//this.activeProcess.enterCpu(clock);
+
+			if (activeProcess.getRemaining() <= activeProcess.getTimeToNextIoOperation() && activeProcess.getRemaining() <= this.maxCpuTime) {
+				Event processEnd = new Event(Event.END_PROCESS, clock + activeProcess.getRemaining());
+				eventQueue.insertEvent(processEnd);
+
+			} else if (activeProcess.getTimeToNextIoOperation() <= maxCpuTime) {
+				Event processToIo = new Event(Event.IO_REQUEST, clock + activeProcess.getTimeToNextIoOperation());
+				eventQueue.insertEvent(processToIo);
+
+			} else {
+				Event processSwitch = new Event(Event.SWITCH_PROCESS, clock + maxCpuTime);
+				eventQueue.insertEvent(processSwitch);
+			}
+
+		}
+		return old;
 	}
 
 	/**
@@ -84,12 +105,16 @@ public class Cpu {
 	 *         process was switched in.
 	 */
 	// Do we need this? (probs)
-	public Event activeProcessLeft(long clock) {
+	public Process activeProcessLeft(long clock) {
+		return this.switchProcess(clock);
+		/*
 		if (this.activeProcess == null) {
 			return null;
 		}
+
 		Event switchEvent = new Event(Event.SWITCH_PROCESS, clock + maxCpuTime);
 		return switchEvent;
+		*/
 	}
 
 	/**
@@ -119,4 +144,5 @@ public class Cpu {
 		activeProcess = null;
 	}
 
+	public boolean isIdle(){return this.activeProcess == null; }
 }
