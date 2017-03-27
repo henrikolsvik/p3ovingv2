@@ -166,8 +166,6 @@ public class Simulator {
 		// As long as there is enough memory, processes are moved from the
 		// memory queue to the cpu queue
 		while (p != null) {
-
-			// TODO: Add this process to the CPU queue!
 			p.addedToCpuQueue(clock);
 			Event resultingEvent = cpu.insertProcess(p, clock);
 			eventQueue.insertEvent(resultingEvent);
@@ -212,9 +210,9 @@ public class Simulator {
 		 */
 		// eventQueue.insertEvent(cpu.switchProcess(clock));
 		/*
+
 		if (process != null) {
 			process.addedToCpuQueue(clock);
-			// TODO: ADD SUPPORT FOR IO QUEUE
 			if(process.getTimeToNextIoOperation() < cpu.maxCpuTime){
 				statistics.totalBusyCpuTime += process.getTimeToNextIoOperation();
 				process.setRemaining(process.getTimeToNextIoOperation());

@@ -115,6 +115,10 @@ public class Cpu {
 		Event switchEvent = new Event(Event.SWITCH_PROCESS, clock + maxCpuTime);
 		return switchEvent;
 		*/
+	/*
+	public Process activeProcessLeft(long clock) {
+		return this.switchProcess(clock);
+	}*/
 	}
 
 	/**
