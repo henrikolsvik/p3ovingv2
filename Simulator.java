@@ -202,11 +202,18 @@ public class Simulator {
 		if (process != null) {
 			process.addedToCpuQueue(clock);
 			// TODO: ADD SUPPORT FOR IO QUEUE
-			if (process.getRemaining() > cpu.maxCpuTime) {
+			if(process.getTimeToNextIoOperation() < cpu.maxCpuTime){
+				statistics.totalBusyCpuTime += process.getTimeToNextIoOperation();
+				process.setRemaining(process.getTimeToNextIoOperation());
+				ioQueue.add(process);
+				eventQueue.insertEvent(new Event(Event.IO_REQUEST, clock + process.getTimeToNextIoOperation()));
+			}
+			else if (process.getRemaining() > cpu.maxCpuTime) {
 				statistics.totalBusyCpuTime += cpu.maxCpuTime;
 				process.setRemaining(cpu.maxCpuTime);
 				eventQueue.insertEvent(cpu.switchProcess(clock));
-			} else {
+			}
+			else {
 				System.out.println("adding end request");
 				statistics.totalBusyCpuTime += process.getRemaining();
 				eventQueue.insertEvent(new Event(Event.END_PROCESS, clock + process.getRemaining()));
