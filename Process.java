@@ -123,11 +123,15 @@ public class Process {
 	}
 
 	public void addedToCpuQueue(long clock) {
+		if (avgIoInterval != 0) {
+			timeSpentInIo = clock - timeOfLastEvent;
+		}
 		nofTimesInReadyQueue++;
 		timeOfLastEvent = clock;
 	}
 
 	public void leftIoQueue(long clock) {
+		timeToNextIoOperation = avgIoInterval;
 		timeSpentWaitingForIo += clock - timeOfLastEvent;
 		timeOfLastEvent = clock;
 	}
@@ -135,10 +139,6 @@ public class Process {
 	public void leftCpuQueue(long clock) {
 		timeSpentInReadyQueue += clock - timeOfLastEvent;
 		timeOfLastEvent = clock;
-	}
-
-	public long getCpuTimeNeeded() {
-		return cpuTimeNeeded;
 	}
 
 	public long getAvgIoInterval() {
@@ -155,6 +155,14 @@ public class Process {
 	
 	public long getTimeToNextIoOperation() {
 		return timeToNextIoOperation;
+	}
+
+	public void endProcess(long clock) {
+		if (cpuTimeNeeded == 0) {
+			timeOfLastEvent = clock;
+			timeSpentInCpu = clock - timeOfLastEvent;
+			updateStatistics(this);
+		}
 	}
 	
 }
