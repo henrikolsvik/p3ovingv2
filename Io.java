@@ -42,8 +42,10 @@ public class Io {
 	public Event addIoRequest(Process requestingProcess, long clock) {
 		ioQueue.add(requestingProcess);
 		requestingProcess.addedToIoQueue(clock);
-		if (ioQueue.size() > 0 && getActiveProcess() == null) {
-			this.activeProcess = requestingProcess;
+		if (ioQueue.isEmpty() && getActiveProcess() == null) {
+			Process p = ioQueue.remove();
+			this.activeProcess = p;
+			p.addedToIoQueue(clock);
 			statistics.nofProcessedIoOperations++;
 			return startIoOperation(clock);
 		}
@@ -60,13 +62,7 @@ public class Io {
 	 *         started, or null if no operation was initiated.
 	 */
 	public Event startIoOperation(long clock) {
-		if (!ioQueue.isEmpty()) {
-			Process process = ioQueue.remove();
-			this.activeProcess = process;
-			process.addedToIoQueue(clock);
-			return new Event(Event.IO_REQUEST, clock + avgIoTime);
-		}
-		return null;
+		return new Event(Event.END_IO, clock + avgIoTime);
 	}
 
 	/**

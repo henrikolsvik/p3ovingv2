@@ -227,7 +227,7 @@ public class Simulator {
 	 * I/O operation.
 	 */
 	private void processIoRequest() {
-		Process p = cpu.getActiveProcess();
+		Process p = cpu.activeProcessLeft(clock);
 		
 		ioQueue.add(p);
 		
