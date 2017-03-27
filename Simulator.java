@@ -74,7 +74,7 @@ public class Simulator {
 
 		System.out.print("Simulating...");
 		// Genererate the first process arrival event
-		eventQueue.insertEvent(new Event(Event.NEW_PROCESS, 100));
+		eventQueue.insertEvent(new Event(Event.NEW_PROCESS, 0));
 		// Process events until the simulation length is exceeded:
 		while (clock < simulationLength && !eventQueue.isEmpty()) {
 			// Find the next event
@@ -166,16 +166,17 @@ public class Simulator {
 		// As long as there is enough memory, processes are moved from the
 		// memory queue to the cpu queue
 		while (p != null) {
-			p.addedToCpuQueue(clock);
-			Event resultingEvent = cpu.insertProcess(p, clock);
-			eventQueue.insertEvent(resultingEvent);
+			cpu.insertProcess(p, clock);	
+			if(cpu.isIdle()) {
+				cpu.switchProcess(clock);
+			}
 			// Also add new events to the event queue if needed
 			// we let the process leave the system immediately, for now.
-			memory.processCompleted(p);
+			//memory.processCompleted(p);
 			// Try to use the freed memory:
-			transferProcessFromMemToReady();
+			//transferProcessFromMemToReady();
 			// Update statistics
-			p.updateStatistics(statistics);
+			//p.updateStatistics(statistics);
 			// Check for more free memory
 			p = memory.checkMemory(clock);
 		}
@@ -242,10 +243,9 @@ public class Simulator {
 	 * Ends the active process, and deallocates any resources allocated to it.
 	 */
 	private void endProcess() {
-		Process p = cpu.getActiveProcess();
+		Process p = cpu.switchProcess(clock);
 		memory.processCompleted(p);
-		cpu.endProcess();
-		cpu.switchProcess(clock);
+		p.updateStatistics(statistics);
 	}
 
 	/**

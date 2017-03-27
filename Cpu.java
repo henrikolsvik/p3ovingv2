@@ -42,15 +42,9 @@ public class Cpu {
 	 * @return The event causing the process that was activated to leave the
 	 *         CPU, or null if no process was activated.
 	 */
-	public Event insertProcess(Process p, long clock) {
+	public void insertProcess(Process p, long clock) {
 		cpuQueue.add(p);
 		p.addedToCpuQueue(clock);
-		if (cpuQueue.size() > 0 && activeProcess == null) {
-			this.activeProcess = p;
-			statistics.nofProcessSwitches++;
-			return new Event(Event.SWITCH_PROCESS, clock + maxCpuTime);
-		}
-		return new Event(Event.SWITCH_PROCESS, clock + maxCpuTime);
 	}
 
 	/**
@@ -67,7 +61,7 @@ public class Cpu {
 	public Process switchProcess(long clock) {
 		Process old = this.activeProcess;
 		if (old != null){
-			//old.leftCpu(clock);
+			old.leftCpu(clock);
 		}
 
 		if(cpuQueue.isEmpty()) {
@@ -78,7 +72,7 @@ public class Cpu {
 
 
 		if (this.activeProcess != null){
-			//this.activeProcess.enterCpu(clock);
+			this.activeProcess.leftCpuQueue(clock);
 
 			if (activeProcess.getRemaining() <= activeProcess.getTimeToNextIoOperation() && activeProcess.getRemaining() <= this.maxCpuTime) {
 				Event processEnd = new Event(Event.END_PROCESS, clock + activeProcess.getRemaining());
@@ -142,10 +136,6 @@ public class Cpu {
 		if (this.cpuQueue.size() > statistics.cpuQueueLargestLength) {
 			statistics.cpuQueueLargestLength = this.cpuQueue.size();
 		}
-	}
-
-	public void endProcess() {
-		activeProcess = null;
 	}
 
 	public boolean isIdle(){return this.activeProcess == null; }
