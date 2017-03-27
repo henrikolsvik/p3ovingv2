@@ -16,7 +16,7 @@ public class Cpu {
 	/**
 	 * Creates a new CPU with the given parameters.
 	 * 
-	 * @param /cpuQueeue
+	 * @param cpuQueueToSet
 	 *            The CPU queue to be used.
 	 * @param maxCpuTime
 	 *            The Round Robin time quant to be used.
@@ -42,7 +42,7 @@ public class Cpu {
 	 */
 	public Event insertProcess(Process p, long clock) {
 		cpuQueue.add(p);
-		p.addedToCpuQueue();
+		p.addedToCpuQueue(clock);
 		if (cpuQueue.size() > 0 && activeProcess == null) {
 			this.activeProcess = p;
 			statistics.nofProcessSwitches++;

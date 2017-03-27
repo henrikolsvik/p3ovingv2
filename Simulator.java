@@ -168,7 +168,7 @@ public class Simulator {
 		while (p != null) {
 
 			// TODO: Add this process to the CPU queue!
-			p.addedToCpuQueue();
+			p.addedToCpuQueue(clock);
 			Event resultingEvent = cpu.insertProcess(p, clock);
 			eventQueue.insertEvent(resultingEvent);
 			// Also add new events to the event queue if needed
@@ -200,7 +200,7 @@ public class Simulator {
 		// eventQueue.insertEvent(cpu.switchProcess(clock));
 
 		if (process != null) {
-			process.enterCpuTime(clock);
+			process.addedToCpuQueue(clock);
 			// TODO: ADD SUPPORT FOR IO QUEUE
 			if (process.getRemaining() > cpu.maxCpuTime) {
 				statistics.totalBusyCpuTime += cpu.maxCpuTime;

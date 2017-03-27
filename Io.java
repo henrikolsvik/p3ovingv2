@@ -41,7 +41,7 @@ public class Io {
 	 */
 	public Event addIoRequest(Process requestingProcess, long clock) {
 		ioQueue.add(requestingProcess);
-		requestingProcess.addedToIoQueue();
+		requestingProcess.addedToIoQueue(clock);
 		if (ioQueue.size() > 0 && getActiveProcess() == null) {
 			this.activeProcess = requestingProcess;
 			statistics.nofProcessedIoOperations++;
